@@ -2,17 +2,28 @@ import React, { Component } from "react";
 
 class MovieCard extends Component {
   render() {
+    const {
+      id,
+      _togleLike,
+      _handelDelete,
+      title,
+      category,
+      likes,
+      dislikes
+    } = this.props;
+
     return (
       <div className={"movies-card"}>
-        <p>{this.props.title}</p>
-        <p>{this.props.category} </p>
+        <p>{title}</p>
+        <p>{category} </p>
 
-        <p>{this.props.likes} </p>
-        <p>{this.props.dislikes} </p>
-
-        <button onClick={() => this.props._handelDelete(this.props.id)}>
-          delete
-        </button>
+        <div>
+          <button onClick={() => _togleLike(id)}>like</button>
+          <span>{likes} </span>
+          <button onClick={() => _togleLike(id)}>dislike</button>
+          <span>{dislikes} </span>
+        </div>
+        <button onClick={() => _handelDelete(id)}>delete</button>
       </div>
     );
   }
