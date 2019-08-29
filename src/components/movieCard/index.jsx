@@ -4,12 +4,13 @@ class MovieCard extends Component {
   render() {
     const {
       id,
-      _togleLike,
-      _handelDelete,
       title,
       category,
       likes,
-      dislikes
+      dislikes,
+      _togleLike,
+      _togleDislike,
+      _handelDelete
     } = this.props;
 
     return (
@@ -20,7 +21,7 @@ class MovieCard extends Component {
         <div>
           <button onClick={() => _togleLike(id)}>like</button>
           <span>{likes} </span>
-          <button onClick={() => _togleLike(id)}>dislike</button>
+          <button onClick={() => _togleDislike(id)}>dislike</button>
           <span>{dislikes} </span>
         </div>
         <button onClick={() => _handelDelete(id)}>delete</button>

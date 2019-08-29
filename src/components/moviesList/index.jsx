@@ -28,12 +28,16 @@ class MoviesList extends Component {
     });
   };
 
-  _togleLike = async id => {
+  _togleLike = id => {
     const { liked, disliked, movies } = this.state;
     const index = movies.findIndex(obj => obj.id === id);
-    //if dislaiked
-    if (disliked.indexOf(id) !== -1) console.log("disliked");
-    //if liked
+
+    if (disliked.indexOf(id) !== -1) {
+      movies[index].dislikes--;
+      this.setState({ disliked: disliked.filter(e => e !== id) });
+      this.setState({ movies: movies });
+    }
+
     if (liked.indexOf(id) !== -1) {
       movies[index].likes--;
       this.setState({ liked: liked.filter(e => e !== id) });
@@ -43,7 +47,27 @@ class MoviesList extends Component {
     this.setState(prevState => ({ liked: [...prevState.liked, id] }));
     movies[index].likes++;
     this.setState({ movies: movies });
-    console.log(liked);
+  };
+
+  _togleDislike = id => {
+    const { liked, disliked, movies } = this.state;
+    const index = movies.findIndex(obj => obj.id === id);
+
+    if (disliked.indexOf(id) !== -1) {
+      movies[index].dislikes--;
+      this.setState({ disliked: disliked.filter(e => e !== id) });
+      this.setState({ movies: movies });
+      return;
+    }
+
+    if (liked.indexOf(id) !== -1) {
+      movies[index].likes--;
+      this.setState({ liked: liked.filter(e => e !== id) });
+      this.setState({ movies: movies });
+    }
+    this.setState(prevState => ({ disliked: [...prevState.disliked, id] }));
+    movies[index].dislikes++;
+    this.setState({ movies: movies });
   };
 
   render() {
@@ -58,6 +82,7 @@ class MoviesList extends Component {
         dislikes={element.dislikes}
         _handelDelete={this._handelDelete}
         _togleLike={this._togleLike}
+        _togleDislike={this._togleDislike}
       />
     ));
 
