@@ -9,6 +9,10 @@ class MovieCard extends Component {
 
         <p>{this.props.likes} </p>
         <p>{this.props.dislikes} </p>
+
+        <button onClick={() => this.props._handelDelete(this.props.id)}>
+          delete
+        </button>
       </div>
     );
   }

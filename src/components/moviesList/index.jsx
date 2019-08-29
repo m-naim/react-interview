@@ -12,22 +12,29 @@ class MoviesList extends Component {
   componentDidMount() {
     movies$.then(res => this.setState({ movies: res }));
   }
+
+  _handelDelete = id => {
+    this.setState({
+      movies: this.state.movies.filter(movie => movie.id !== id)
+    });
+  };
+
   render() {
     const displayMovies = this.state.movies.map((element, index) => (
       <MovieCard
         key={element.id}
+        id={element.id}
         title={element.title}
         category={element.category}
         likes={element.likes}
         dislikes={element.dislikes}
+        _handelDelete={this._handelDelete}
       />
     ));
 
     return (
       <div>
         <div className={"movies-container"}>{displayMovies}</div>
-
-        <button onClick={() => console.log(this.state.movies)}>ok</button>
       </div>
     );
   }
