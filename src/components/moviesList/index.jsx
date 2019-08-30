@@ -7,8 +7,11 @@ class MoviesList extends Component {
     super(props);
     this.state = {
       movies: [],
+      categories: [],
       liked: [],
       disliked: [],
+      filters: [],
+      filteredMovies: [],
       loading: true
     };
   }
@@ -16,16 +19,30 @@ class MoviesList extends Component {
     this.setData();
   }
 
+  getCategories = movies => {
+    const categories = movies
+      .map(movie => movie.category)
+      .reduce(
+        (unique, category) =>
+          unique.includes(category) ? unique : [...unique, category],
+        []
+      );
+
+    this.setState({ categories: categories });
+  };
   setData = async () => {
     await movies$.then(res => this.setState({ movies: res }));
-    console.log(this.state.movies);
+    const { movies } = this.state;
+    this.getCategories(movies);
     this.setState({ loading: false });
   };
 
-  _handelDelete = id => {
-    this.setState({
+  _handelDelete = async id => {
+    await this.setState({
       movies: this.state.movies.filter(movie => movie.id !== id)
     });
+
+    this.getCategories(this.state.movies);
   };
 
   _togleLike = id => {
@@ -70,27 +87,49 @@ class MoviesList extends Component {
     this.setState({ movies: movies });
   };
 
-  render() {
-    const { loading, movies } = this.state;
-    const displayMovies = movies.map((element, index) => (
-      <MovieCard
-        key={element.id}
-        id={element.id}
-        title={element.title}
-        category={element.category}
-        likes={element.likes}
-        dislikes={element.dislikes}
-        _handelDelete={this._handelDelete}
-        _togleLike={this._togleLike}
-        _togleDislike={this._togleDislike}
-      />
-    ));
+  _togeleFilter = async category => {
+    const { filters } = this.state;
+    if (filters.includes(category)) {
+      await this.setState({ filters: filters.filter(e => e !== category) });
+      console.log(this.state.filters);
 
-    return (
+      return;
+    }
+    await this.setState({ filters: [...filters, category] });
+    console.log(this.state.filters);
+  };
+
+  render() {
+    const { loading, movies, categories, filters } = this.state;
+    const displayMovies = movies
+      .filter(movie => !filters.includes(movie.category))
+      .map((element, index) => (
+        <MovieCard
+          key={element.id}
+          id={element.id}
+          title={element.title}
+          category={element.category}
+          likes={element.likes}
+          dislikes={element.dislikes}
+          _handelDelete={this._handelDelete}
+          _togleLike={this._togleLike}
+          _togleDislike={this._togleDislike}
+        />
+      ));
+
+    const filterButtons = categories.map((category, index) => (
+      <button key={index} onClick={() => this._togeleFilter(category)}>
+        {category}
+      </button>
+    ));
+    return loading ? (
       <div>
-        <div className={"movies-container"}>
-          {loading ? <h1>loading ...</h1> : displayMovies}
-        </div>
+        <h1>loading ...</h1>
+      </div>
+    ) : (
+      <div>
+        <div>{filterButtons}</div>
+        <div className={"movies-container"}>{displayMovies}</div>
       </div>
     );
   }
