@@ -43,8 +43,8 @@ class MoviesList extends Component {
     this.setState({ loading: false });
   };
 
-  _handelDelete = async id => {
-    await this.setState({
+  _handelDelete = id => {
+    this.setState({
       movies: this.state.movies.filter(movie => movie.id !== id)
     });
 
@@ -94,18 +94,20 @@ class MoviesList extends Component {
   };
 
   _togeleFilter = async category => {
-    const { filters, movies } = this.state;
-    if (filters.includes(category)) {
-      await this.setState({ filters: filters.filter(e => e !== category) });
-      this._handlePagination();
-      return;
-    } else await this.setState({ filters: [...filters, category] });
+    const { filters, movies, filteredMovies } = this.state;
 
-    await this.setState({
-      filteredMovies: movies.filter(movie => !filters.includes(movie.category))
-    });
+    // if (filters.includes(category)) {
+    //   await this.setState({ filters: filters.filter(e => e !== category) });
+    //   return;
+    // }
 
-    this._handlePagination();
+    await this.setState((prevState, props) => ({
+      filters: [...prevState.filters, props.category]
+    }));
+    // await this.setState({
+    //   filteredMovies: movies.filter(movie => !filters.includes(movie.category))
+    // });
+    console.log({ filteredMovies, filters, category });
   };
 
   _handleNextPage = async () => {
