@@ -118,12 +118,22 @@ class MoviesList extends Component {
   };
 
   _handlePagination = async () => {
-    const { page, filteredMovies } = this.state;
+    const { page, filteredMovies, elementsNumberByPage } = this.state;
+    console.log(elementsNumberByPage);
+
     await this.setState({
-      moviesToDispaly: filteredMovies.slice(0 + page * 4, 4 + page * 4)
+      moviesToDispaly: filteredMovies.slice(
+        0 + page * elementsNumberByPage,
+        (1 + page) * elementsNumberByPage
+      )
     });
   };
 
+  _handleMoviePerPageValue = async e => {
+    const value = e.target.value;
+    await this.setState({ elementsNumberByPage: value });
+    this._handlePagination();
+  };
   render() {
     const { loading, categories, moviesToDispaly } = this.state;
 
@@ -146,16 +156,32 @@ class MoviesList extends Component {
         {category}
       </button>
     ));
+
+    const btnsNumberByPage = [4, 8, 12].map((value, index) => (
+      <input
+        type="button"
+        key={index}
+        onClick={this._handleMoviePerPageValue}
+        value={value}
+      />
+    ));
     return loading ? (
       <div>
         <h1>loading ...</h1>
       </div>
     ) : (
       <div>
-        <div>{filterButtons}</div>
+        <div>
+          <span>filters</span>
+          {filterButtons}
+        </div>
         <div>
           <button onClick={this._handlePrevPage}>presedant</button>
           <button onClick={this._handleNextPage}>suivant</button>
+        </div>
+        <div>
+          <span>movies / page </span>
+          {btnsNumberByPage}
         </div>
         <div className={"movies-container"}>{displayMovies}</div>
       </div>
