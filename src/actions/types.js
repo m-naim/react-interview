@@ -1,4 +1,7 @@
 export const GET_DATA = "GET_DATA";
 export const DELETE_MOVIE = "DELETE_MOVIE";
-
-export const Display = "Display";
+export const TOGEL_FILTER = "TOGEL_FILTER";
+export const TOGEL_LIKES = "TOGEL_LIKES";
+export const TOGEL_DISLIKES = "TOGEL_DISLIKES";
+export const HANDLE_ELEMENTSBYPAGE = "HANDLE_ELEMENTSBYPAGE";
+export const HANDLE_CHANGEPAGE = "HANDLE_CHANGEPAGE";
