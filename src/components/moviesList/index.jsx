@@ -44,11 +44,20 @@ class MoviesList extends Component {
   };
 
   _handelDelete = id => {
-    this.setState({
-      movies: this.state.movies.filter(movie => movie.id !== id)
-    });
-
-    this.getCategories(this.state.movies);
+    this.setState(
+      prevState => ({
+        movies: prevState.movies.filter(movie => movie.id !== id),
+        filteredMovies: prevState.filteredMovies.filter(
+          movie => movie.id !== id
+        ),
+        liked: prevState.liked.filter(movie => movie !== id),
+        disliked: prevState.disliked.filter(movie => movie !== id)
+      }),
+      () => {
+        this._handlePagination();
+        this.getCategories(this.state.movies);
+      }
+    );
   };
 
   _togleLike = id => {
@@ -93,21 +102,25 @@ class MoviesList extends Component {
     this.setState({ movies: movies });
   };
 
-  _togeleFilter = async category => {
-    const { filters, movies, filteredMovies } = this.state;
+  _togeleFilter = category => {
+    const { filters, movies } = this.state;
+    let newfilters = filters;
+    if (filters.includes(category))
+      newfilters = filters.filter(e => e !== category);
+    else newfilters = [...filters, category];
 
-    // if (filters.includes(category)) {
-    //   await this.setState({ filters: filters.filter(e => e !== category) });
-    //   return;
-    // }
-
-    await this.setState((prevState, props) => ({
-      filters: [...prevState.filters, props.category]
-    }));
-    // await this.setState({
-    //   filteredMovies: movies.filter(movie => !filters.includes(movie.category))
-    // });
-    console.log({ filteredMovies, filters, category });
+    this.setState(
+      {
+        filters: newfilters,
+        filteredMovies: movies.filter(
+          movie => !newfilters.includes(movie.category)
+        )
+      },
+      () => {
+        console.log(newfilters, this.state.filteredMovies);
+        this._handlePagination();
+      }
+    );
   };
 
   _handleNextPage = async () => {
@@ -123,10 +136,10 @@ class MoviesList extends Component {
     this._handlePagination();
   };
 
-  _handlePagination = async () => {
+  _handlePagination = () => {
     const { page, filteredMovies, elementsNumberByPage } = this.state;
-
-    await this.setState({
+    console.log(filteredMovies);
+    this.setState({
       moviesToDispaly: filteredMovies.slice(
         0 + page * elementsNumberByPage,
         (1 + page) * elementsNumberByPage
@@ -139,6 +152,7 @@ class MoviesList extends Component {
     await this.setState({ elementsNumberByPage: value, page: 0 });
     this._handlePagination();
   };
+
   render() {
     const { loading, categories, moviesToDispaly } = this.state;
 
