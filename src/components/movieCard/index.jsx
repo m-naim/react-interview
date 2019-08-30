@@ -15,7 +15,7 @@ class MovieCard extends Component {
 
     return (
       <div className={"movies-card"}>
-        <p>{title}</p>
+        <p className={"movie-title"}>{title}</p>
         <p>{category} </p>
 
         <div>

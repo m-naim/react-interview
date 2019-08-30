@@ -3,10 +3,9 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background: linear-gradient(225deg, #ff7568, #f05e50, #f64736);
   min-height: 6vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
@@ -15,12 +14,45 @@
 
 .movies-card {
   width: 250px;
-  border: 1px solid black;
-  margin: 12px;
+  margin: 18px;
+  padding: 6px;
+  border: 1px solid #d8cecd;
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 25, 0.2);
+  border-radius: 6px;
 }
 
 .movies-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+button,
+input[type="button"] {
+  background-color: transparent;
+  border: 1px solid #f05e50;
+  color: #f05e50;
+  border-radius: 6px;
+  margin: 0 6px 0 6px;
+}
+
+.active {
+  background-color: #f05e50;
+  color: #fff;
+}
+
+.movie-title {
+  font-weight: bold;
+}
+
+.pagination-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin: 32px;
+}
+
+.filters-container {
+  margin: 32px;
 }

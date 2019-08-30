@@ -33,6 +33,7 @@ class MoviesList extends Component {
 
     this.setState({ categories: categories });
   };
+
   setData = async () => {
     await movies$.then(res => this.setState({ movies: res }));
     const { movies } = this.state;
@@ -92,16 +93,19 @@ class MoviesList extends Component {
     this.setState({ movies: movies });
   };
 
-  _togeleFilter = category => {
+  _togeleFilter = async category => {
     const { filters, movies } = this.state;
     if (filters.includes(category)) {
-      this.setState({ filters: filters.filter(e => e !== category) });
+      await this.setState({ filters: filters.filter(e => e !== category) });
+      this._handlePagination();
       return;
-    } else this.setState({ filters: [...filters, category] });
+    } else await this.setState({ filters: [...filters, category] });
 
-    this.setState({
+    await this.setState({
       filteredMovies: movies.filter(movie => !filters.includes(movie.category))
     });
+
+    this._handlePagination();
   };
 
   _handleNextPage = async () => {
@@ -119,7 +123,6 @@ class MoviesList extends Component {
 
   _handlePagination = async () => {
     const { page, filteredMovies, elementsNumberByPage } = this.state;
-    console.log(elementsNumberByPage);
 
     await this.setState({
       moviesToDispaly: filteredMovies.slice(
@@ -131,7 +134,7 @@ class MoviesList extends Component {
 
   _handleMoviePerPageValue = async e => {
     const value = e.target.value;
-    await this.setState({ elementsNumberByPage: value });
+    await this.setState({ elementsNumberByPage: value, page: 0 });
     this._handlePagination();
   };
   render() {
@@ -171,18 +174,21 @@ class MoviesList extends Component {
       </div>
     ) : (
       <div>
-        <div>
+        <div className={"filters-container"}>
           <span>filters</span>
           {filterButtons}
         </div>
-        <div>
-          <button onClick={this._handlePrevPage}>presedant</button>
-          <button onClick={this._handleNextPage}>suivant</button>
+        <div className={"pagination-bar"}>
+          <div>
+            <button onClick={this._handlePrevPage}>presedant</button>
+            <button onClick={this._handleNextPage}>suivant</button>
+          </div>
+          <div>
+            <span>movies / page </span>
+            {btnsNumberByPage}
+          </div>
         </div>
-        <div>
-          <span>movies / page </span>
-          {btnsNumberByPage}
-        </div>
+
         <div className={"movies-container"}>{displayMovies}</div>
       </div>
     );
