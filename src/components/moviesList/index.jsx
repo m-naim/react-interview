@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import MovieCard from "../movieCard";
 import { movies$ } from "../../movies";
 import { FilterButton, NumberButton } from "./buttons";
+import { connect } from "react-redux";
+import { getData } from "../../actions/Movieactions";
 
 class MoviesList extends Component {
   constructor(props) {
@@ -230,4 +232,10 @@ class MoviesList extends Component {
   }
 }
 
-export default MoviesList;
+const mapStateToProps = state => ({
+  store: state
+});
+export default connect(
+  mapStateToProps,
+  { getData }
+)(MoviesList);
