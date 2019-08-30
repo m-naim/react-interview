@@ -12,6 +12,9 @@ class MoviesList extends Component {
       disliked: [],
       filters: [],
       filteredMovies: [],
+      elementsNumberByPage: 4,
+      page: 0,
+      moviesToDispaly: [],
       loading: true
     };
   }
@@ -34,6 +37,8 @@ class MoviesList extends Component {
     await movies$.then(res => this.setState({ movies: res }));
     const { movies } = this.state;
     this.getCategories(movies);
+    await this.setState({ filteredMovies: movies });
+    this._handlePagination();
     this.setState({ loading: false });
   };
 
@@ -87,35 +92,54 @@ class MoviesList extends Component {
     this.setState({ movies: movies });
   };
 
-  _togeleFilter = async category => {
-    const { filters } = this.state;
+  _togeleFilter = category => {
+    const { filters, movies } = this.state;
     if (filters.includes(category)) {
-      await this.setState({ filters: filters.filter(e => e !== category) });
-      console.log(this.state.filters);
-
+      this.setState({ filters: filters.filter(e => e !== category) });
       return;
-    }
-    await this.setState({ filters: [...filters, category] });
-    console.log(this.state.filters);
+    } else this.setState({ filters: [...filters, category] });
+
+    this.setState({
+      filteredMovies: movies.filter(movie => !filters.includes(movie.category))
+    });
+  };
+
+  _handleNextPage = async () => {
+    const { page, filteredMovies, elementsNumberByPage } = this.state;
+    if (filteredMovies.length / elementsNumberByPage > page + 1)
+      await this.setState({ page: page + 1 });
+    this._handlePagination();
+  };
+
+  _handlePrevPage = async () => {
+    const { page } = this.state;
+    if (page - 1 >= 0) await this.setState({ page: page - 1 });
+    this._handlePagination();
+  };
+
+  _handlePagination = async () => {
+    const { page, filteredMovies } = this.state;
+    await this.setState({
+      moviesToDispaly: filteredMovies.slice(0 + page * 4, 4 + page * 4)
+    });
   };
 
   render() {
-    const { loading, movies, categories, filters } = this.state;
-    const displayMovies = movies
-      .filter(movie => !filters.includes(movie.category))
-      .map((element, index) => (
-        <MovieCard
-          key={element.id}
-          id={element.id}
-          title={element.title}
-          category={element.category}
-          likes={element.likes}
-          dislikes={element.dislikes}
-          _handelDelete={this._handelDelete}
-          _togleLike={this._togleLike}
-          _togleDislike={this._togleDislike}
-        />
-      ));
+    const { loading, categories, moviesToDispaly } = this.state;
+
+    const displayMovies = moviesToDispaly.map((element, index) => (
+      <MovieCard
+        key={element.id}
+        id={element.id}
+        title={element.title}
+        category={element.category}
+        likes={element.likes}
+        dislikes={element.dislikes}
+        _handelDelete={this._handelDelete}
+        _togleLike={this._togleLike}
+        _togleDislike={this._togleDislike}
+      />
+    ));
 
     const filterButtons = categories.map((category, index) => (
       <button key={index} onClick={() => this._togeleFilter(category)}>
@@ -129,6 +153,10 @@ class MoviesList extends Component {
     ) : (
       <div>
         <div>{filterButtons}</div>
+        <div>
+          <button onClick={this._handlePrevPage}>presedant</button>
+          <button onClick={this._handleNextPage}>suivant</button>
+        </div>
         <div className={"movies-container"}>{displayMovies}</div>
       </div>
     );
