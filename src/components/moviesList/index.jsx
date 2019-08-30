@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import MovieCard from "../movieCard";
 import { movies$ } from "../../movies";
+import { FilterButton, NumberButton } from "./buttons";
 
 class MoviesList extends Component {
   constructor(props) {
@@ -148,13 +149,20 @@ class MoviesList extends Component {
   };
 
   _handleMoviePerPageValue = async e => {
-    const value = e.target.value;
+    const value = parseInt(e.target.value);
     await this.setState({ elementsNumberByPage: value, page: 0 });
     this._handlePagination();
   };
 
   render() {
-    const { loading, categories, moviesToDispaly } = this.state;
+    const {
+      loading,
+      categories,
+      moviesToDispaly,
+      page,
+      elementsNumberByPage,
+      filteredMovies
+    } = this.state;
 
     const displayMovies = moviesToDispaly.map((element, index) => (
       <MovieCard
@@ -164,6 +172,8 @@ class MoviesList extends Component {
         category={element.category}
         likes={element.likes}
         dislikes={element.dislikes}
+        liked={this.state.liked}
+        disliked={this.state.disliked}
         _handelDelete={this._handelDelete}
         _togleLike={this._togleLike}
         _togleDislike={this._togleDislike}
@@ -171,15 +181,19 @@ class MoviesList extends Component {
     ));
 
     const filterButtons = categories.map((category, index) => (
-      <button key={index} onClick={() => this._togeleFilter(category)}>
-        {category}
-      </button>
+      <FilterButton
+        active={this.state.filters.includes(category) ? "" : "active"}
+        key={index}
+        onClick={() => this._togeleFilter(category)}
+        value={category}
+      />
     ));
 
     const btnsNumberByPage = [4, 8, 12].map((value, index) => (
-      <input
+      <NumberButton
         type="button"
         key={index}
+        active={value === this.state.elementsNumberByPage ? "active" : ""}
         onClick={this._handleMoviePerPageValue}
         value={value}
       />
@@ -197,6 +211,11 @@ class MoviesList extends Component {
         <div className={"pagination-bar"}>
           <div>
             <button onClick={this._handlePrevPage}>presedant</button>
+            <span>
+              Page
+              {page + 1}/
+              {Math.ceil(filteredMovies.length / elementsNumberByPage)}
+            </span>
             <button onClick={this._handleNextPage}>suivant</button>
           </div>
           <div>

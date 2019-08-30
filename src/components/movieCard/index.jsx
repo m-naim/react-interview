@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { LikeButton } from "../moviesList/buttons";
 
 class MovieCard extends Component {
   render() {
@@ -8,6 +9,8 @@ class MovieCard extends Component {
       category,
       likes,
       dislikes,
+      liked,
+      disliked,
       _togleLike,
       _togleDislike,
       _handelDelete
@@ -19,9 +22,17 @@ class MovieCard extends Component {
         <p>{category} </p>
 
         <div>
-          <button onClick={() => _togleLike(id)}>like</button>
+          <LikeButton
+            onClick={() => _togleLike(id)}
+            active={liked.includes(id) ? "active" : ""}
+            value={"like"}
+          />
           <span>{likes} </span>
-          <button onClick={() => _togleDislike(id)}>dislike</button>
+          <LikeButton
+            onClick={() => _togleDislike(id)}
+            active={disliked.includes(id) ? "active" : ""}
+            value={"disike"}
+          />
           <span>{dislikes} </span>
         </div>
         <button onClick={() => _handelDelete(id)}>delete</button>
